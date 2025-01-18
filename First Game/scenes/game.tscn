@@ -1,15 +1,16 @@
-[gd_scene load_steps=18 format=3 uid="uid://cuv4vme4rwno0"]
+[gd_scene load_steps=20 format=3 uid="uid://cuv4vme4rwno0"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_l4ihi"]
 [ext_resource type="PackedScene" uid="uid://dqnaqj8yb6hwd" path="res://scenes/player.tscn" id="1_rbmkf"]
 [ext_resource type="FontFile" uid="uid://c53kogtyjwsss" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_nlliu"]
+[ext_resource type="Script" path="res://scripts/finish_line_controller.gd" id="2_oq27l"]
 [ext_resource type="Texture2D" uid="uid://d0q2g65ahgok" path="res://assets/sprites/world_tileset.png" id="2_r1crl"]
 [ext_resource type="PackedScene" uid="uid://bgv5v2fxqlswe" path="res://scenes/platform.tscn" id="3_cmfc3"]
 [ext_resource type="PackedScene" uid="uid://pqp5qaw561fr" path="res://scenes/coin.tscn" id="4_28cek"]
 [ext_resource type="PackedScene" uid="uid://dtrbka1ef726o" path="res://scenes/killzone.tscn" id="5_x8euu"]
 [ext_resource type="PackedScene" uid="uid://d2w2i5h0lhc6l" path="res://scenes/slime.tscn" id="6_l0s6b"]
 [ext_resource type="FontFile" uid="uid://dbjl1e6kdxpl6" path="res://assets/fonts/PixelOperator8.ttf" id="7_8cblx"]
-[ext_resource type="Script" path="res://scripts/finish_line.gd" id="10_nyxvp"]
+[ext_resource type="Script" path="res://scripts/finish_line.gd" id="10_fxpup"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ashvg"]
 texture = ExtResource("2_r1crl")
@@ -455,8 +456,13 @@ _data = {
 "move": SubResource("Animation_bm7kf")
 }
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2186x"]
-size = Vector2(33, 83)
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_mjhg6"]
+properties/0/path = NodePath(".:winner")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4l26n"]
+size = Vector2(20, 79)
 
 [node name="Game" type="Node2D"]
 
@@ -630,12 +636,25 @@ spawn_limit = 2
 [node name="Players" type="Node2D" parent="."]
 
 [node name="FinishLine" type="Area2D" parent="."]
+unique_name_in_owner = true
 collision_mask = 2
-script = ExtResource("10_nyxvp")
+script = ExtResource("10_fxpup")
+
+[node name="FinishLineSynchronizer" type="MultiplayerSynchronizer" parent="FinishLine"]
+unique_name_in_owner = true
+replication_config = SubResource("SceneReplicationConfig_mjhg6")
+script = ExtResource("2_oq27l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FinishLine"]
-position = Vector2(622.5, -136.5)
-shape = SubResource("RectangleShape2D_2186x")
+position = Vector2(628, -136.5)
+shape = SubResource("RectangleShape2D_4l26n")
+
+[node name="Message" type="Label" parent="FinishLine"]
+offset_left = 541.0
+offset_top = -45.0
+offset_right = 598.0
+offset_bottom = -22.0
+text = "X Wins!"
 
 [connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/HostGame" to="GameManager" method="become_host"]
 [connection signal="pressed" from="MultiplayerHUD/Panel/VBoxContainer/JoinAsPlayer2" to="GameManager" method="join_as_player_2"]

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://drivgy834rvmd"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+layer = 10
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Winner"
